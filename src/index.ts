@@ -1,1 +1,3 @@
-console.log("Hello project");
+import { stdin, stdout } from 'node:process';
+
+stdin.pipe(stdout);
