@@ -1,21 +1,11 @@
-import { stdin, stdout } from 'node:process';
-import { Writable } from 'node:stream';
+import * as net from 'node:net';
 
-class MyWriter extends Writable {
-  backwards(text: string): string {
-    let back = '';
-    for(let i = text.length - 1; i >= 0; i--) {
-      back += text[i];
-    }
-    return back;
-  }
-  _write(chunk: Buffer, encoding: BufferEncoding, callback: Function) {
-    const backwards = this.backwards(chunk.toString('utf8'));
-    process.stdout.write(`${backwards} \n`);
-    callback();
-  }
+function newConn(socket: net.Socket) {
+  console.log(`new connection ${socket.remoteAddress} // ${socket.remotePort}`)
 }
 
-const myWriter = new MyWriter();
+const socket = net.createServer();
+socket.on('connection', newConn);
 
-stdin.pipe(myWriter);
+socket.listen({ port: 1234, host: '127.0.0.1'});
+
