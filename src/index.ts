@@ -11,7 +11,8 @@ function newConn(socket: net.Socket) {
     console.log("data: ", data);
     socket.write(data);
 
-    if (data.includes("q")) {
+    console.log(data.toString("utf8"));
+    if (data.toString("utf8") === "quit\n") {
       console.log("closing.");
       socket.end();
     }
