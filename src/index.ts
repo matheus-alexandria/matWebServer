@@ -1,5 +1,16 @@
 import * as net from "node:net";
 
+type TCPConn = {
+  socket: net.Socket;
+  reader: null | {
+    resolve: (value: Buffer) => void,
+    reject: (reason: Error) => void
+  }
+}
+
+async function soRead(conn: TCPConn): Promise<Buffer> { return Buffer.from('') };
+async function soWrite(conn: TCPConn, data: Buffer): Promise<void> {};
+
 function newConn(socket: net.Socket) {
   console.log(`new connection ${socket.remoteAddress} // ${socket.remotePort}`);
 
