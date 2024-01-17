@@ -1,12 +1,5 @@
 import * as net from "node:net";
-
-type TCPConn = {
-  socket: net.Socket;
-  reader: null | {
-    resolve: (value: Buffer) => void,
-    reject: (reason: Error) => void
-  }
-}
+import { TCPConn } from "./interfaces/TCPConn";
 
 async function soRead(conn: TCPConn): Promise<Buffer> { return Buffer.from('') };
 async function soWrite(conn: TCPConn, data: Buffer): Promise<void> {};
