@@ -1,7 +1,16 @@
 import * as net from "node:net";
 import { TCPConn } from "./interfaces/TCPConn";
 
-async function soRead(conn: TCPConn): Promise<Buffer> { return Buffer.from('') };
+async function soRead(conn: TCPConn): Promise<Buffer> {
+  console.assert(!conn.reader);   // no concurrent calls
+  return new Promise((resolve, reject) => {
+      // save the promise callbacks
+      conn.reader = {resolve: resolve, reject: reject};
+      // and resume the 'data' event to fulfill the promise later.
+      conn.socket.resume();
+  });
+}
+
 async function soWrite(conn: TCPConn, data: Buffer): Promise<void> {};
 
 function newConn(socket: net.Socket) {
