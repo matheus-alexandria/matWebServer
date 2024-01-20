@@ -75,31 +75,28 @@ async function soWrite(conn: TCPConn, data: Buffer): Promise<void> {
   });
 }
 
-function newConn(socket: net.Socket) {
+async function newConn(socket: net.Socket) {
   console.log(`new connection ${socket.remoteAddress} // ${socket.remotePort}`);
 
-  socket.on("end", () => {
-    console.log("EOF");
-  });
+  const TCPConn = soInit(socket);
 
-  socket.on("data", (data: Buffer) => {
-    console.log("data: ", data);
-    socket.write(data);
+  while (true) {
+    const data = await soRead(TCPConn);
 
-    if (data.toString("utf-8").substring(0, data.length - 1) === "quit") {
-      console.log("closing.");
-      socket.end();
+    if (data.length === 0) {
+      console.log('ending connection.');
+      break;
     }
-  });
+
+    console.log('data: ', data);
+    await soWrite(TCPConn, data);
+  }
 }
 
 const socket = net.createServer({
   pauseOnConnect: true,
 });
 
-socket.on("error", (err) => {
-  throw err.message;
-});
 socket.on("connection", newConn);
 
 socket.listen({ port: 1234, host: "127.0.0.1" });
