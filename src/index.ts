@@ -89,7 +89,8 @@ async function newConn(socket: net.Socket) {
     }
 
     console.log('data: ', data);
-    await soWrite(TCPConn, data);
+    const echoData = Buffer.from(`Echoed data: ${data}`);
+    await soWrite(TCPConn, echoData);
   }
 }
 
