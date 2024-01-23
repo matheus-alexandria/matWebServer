@@ -1,5 +1,4 @@
 import * as net from "node:net";
-import { TCPConn } from "./interfaces/TCPConn";
 import { newConn } from "./promiseSocket";
 
 const socket = net.createServer({
