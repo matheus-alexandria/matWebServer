@@ -88,8 +88,15 @@ export async function newConn(socket: net.Socket) {
       break;
     }
 
+    if (data.toString() === 'quit\n') {
+        console.log('data: ', data);
+        await soWrite(TCPConn, Buffer.from('Bye.'));
+        console.log(`ending ${socket.remoteAddress} connection.`);
+        break;
+    }
+
     console.log('data: ', data);
-    const echoData = Buffer.from(`Echoed data: ${data}`);
+    const echoData = Buffer.from(`Imitation robot: ${data}`);
     await soWrite(TCPConn, echoData);
   }
 }
