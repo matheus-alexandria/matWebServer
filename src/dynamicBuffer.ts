@@ -21,4 +21,7 @@ export function bufPush(buf: DynamicBuf, data: Buffer): void {
   buf.length = newLen;
 }
 
-export function bufPop(): void {}
+export function bufPop(buf: DynamicBuf, len: number): void {
+  buf.data.copyWithin(0, len, buf.length);
+  buf.length -= len;
+}
