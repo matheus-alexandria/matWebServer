@@ -1,5 +1,6 @@
 import * as net from "node:net";
 import { TCPConn } from "./interfaces/TCPConn";
+import { DynamicBuf } from "./dynamicBuffer";
 
 export function soInit(socket: net.Socket): TCPConn {
   const conn: TCPConn = {
@@ -75,10 +76,10 @@ export async function soWrite(conn: TCPConn, data: Buffer): Promise<void> {
   });
 }
 
-export async function newConn(socket: net.Socket) {
+export async function serverClient(socket: net.Socket) {
   console.log(`new connection ${socket.remoteAddress} // ${socket.remotePort}`);
-
   const TCPConn = soInit(socket);
+  const dynBuf: DynamicBuf = { data: Buffer.alloc(0), length: 0 }
 
   while (true) {
     const data = await soRead(TCPConn);
