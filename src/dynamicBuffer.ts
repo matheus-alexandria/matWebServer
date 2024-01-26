@@ -1,9 +1,9 @@
-interface DynBuf {
+export interface DynamicBuf {
   data: Buffer;
   length: number;
 }
 
-export function bufPush(buf: DynBuf, data: Buffer): void {
+export function bufPush(buf: DynamicBuf, data: Buffer): void {
   const newLen = buf.length + data.length;
 
   if (newLen > buf.data.length) {
@@ -20,3 +20,5 @@ export function bufPush(buf: DynBuf, data: Buffer): void {
   data.copy(buf.data, buf.length, 0);
   buf.length = newLen;
 }
+
+export function bufPop(): void {}
