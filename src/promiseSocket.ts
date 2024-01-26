@@ -1,6 +1,7 @@
 import * as net from "node:net";
 import { TCPConn } from "./interfaces/TCPConn";
-import { DynamicBuf } from "./dynamicBuffer";
+import { DynamicBuf, bufPush } from "./dynamicBuffer";
+import { cutMessage } from "./utils/cutMessage";
 
 export function soInit(socket: net.Socket): TCPConn {
   const conn: TCPConn = {
@@ -82,22 +83,30 @@ export async function serverClient(socket: net.Socket) {
   const dynBuf: DynamicBuf = { data: Buffer.alloc(0), length: 0 }
 
   while (true) {
-    const data = await soRead(TCPConn);
+    const msg = cutMessage(dynBuf);
 
-    if (data.length === 0) {
-      console.log('ending connection.');
-      break;
+    if (!msg) {
+      const data = await soRead(TCPConn);
+      bufPush(dynBuf, data);
+
+      if (data.length === 0) {
+        console.log('ending connection.');
+        break;
+      }
+
+      continue;
     }
 
-    if (data.toString() === 'quit\n') {
-        console.log('data: ', data);
+    if (msg.toString() === 'quit\n') {
         await soWrite(TCPConn, Buffer.from('Bye.'));
         console.log(`ending ${socket.remoteAddress} connection.`);
-        break;
+        socket.destroy();
+        return;
+    } else {
+
+      const echoData = Buffer.concat([Buffer.from('Echo: '), msg]);
+      await soWrite(TCPConn, echoData);
     }
 
-    console.log('data: ', data);
-    const echoData = Buffer.from(`Imitation robot: ${data}`);
-    await soWrite(TCPConn, echoData);
   }
 }
